@@ -25,9 +25,6 @@ HashTable.prototype.insert = function (k, v) {
 };
 
 HashTable.prototype.retrieve = function (k) {
-  // if (k === 'val1') {
-  //   debugger;
-  // }
   var index = getIndexBelowMaxForKey(k, this._limit);
   var retrieveBucket = this._storage.get(index);
   for (let j = 0; j < retrieveBucket.length; j++) {
