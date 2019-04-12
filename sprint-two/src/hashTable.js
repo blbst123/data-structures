@@ -7,26 +7,44 @@ var HashTable = function () {
 
 HashTable.prototype.insert = function (k, v) {
   var index = getIndexBelowMaxForKey(k, this._limit);
-  this._kList.push(k)
-  if (!this._kList.includes(k) && this._storage[index] != undefined) {
-    // handle functional conflict 
+  var tuple = [k, v];
+  if (this._storage.get(index) === undefined) {
+    var bucket = [];
+    bucket.push(tuple);
+    this._storage.set(index, bucket);
   } else {
-    // set the index'th position of the storage array to v 
-    this._storage.set(index, v);
+    var existingBucket = this._storage.get(index)
+    var indexofk = existingBucket.map(i => i[0]).indexOf(k)
+    if (indexofk !== -1) {
+      existingBucket[indexofk] = tuple;
+    } else {
+      existingBucket.push(tuple);
+    }
+    // this._storage.set(index, existingBucket); // this line is optional
   }
-
-
 };
 
 HashTable.prototype.retrieve = function (k) {
+  // if (k === 'val1') {
+  //   debugger;
+  // }
   var index = getIndexBelowMaxForKey(k, this._limit);
-  var retrieveItem = this._storage.get(index);
-  return retrieveItem;
+  var retrieveBucket = this._storage.get(index);
+  for (let j = 0; j < retrieveBucket.length; j++) {
+    if (retrieveBucket[j][0] === k) {
+      return retrieveBucket[j][1];
+    }
+  }
 };
 
 HashTable.prototype.remove = function (k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
-  this._storage.set(index, undefined);
+  var retrieveBucket = this._storage.get(index);
+  for (let j = 0; j < retrieveBucket.length; j++) {
+    if (retrieveBucket[j][0] === k) {
+      retrieveBucket.splice(j, 1);
+    }
+  }
 };
 
 
